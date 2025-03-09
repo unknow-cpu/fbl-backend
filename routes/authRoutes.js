@@ -6,7 +6,7 @@ const userController = require('../controllers/userController');
 //     res.json({ isAuthenticated: !!req.session.user });
 //   });
 
-router.get('/check-session', userController.checksession);
+router.get('/check-session', userController.checkSession);
 
 // Register
 router.get('/register', (req, res) => res.render('user/register'));
@@ -17,10 +17,8 @@ router.get('/login', (req, res) => res.render('user/login'));
 router.post('/login', userController.login);
 
 // Dashboard
-router.get('/dashboard', (req, res) => {
-    if (!req.session.userId) return res.redirect('/login');
-    res.render('dashboard');
-});
+router.get('/user/:id', userController.protect, userController.getUserById);
+router.get('/users', userController.protect, userController.getAllUsers);
 
 // Logout
 router.post('/logout', userController.logout);

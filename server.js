@@ -12,7 +12,7 @@ const app = express();
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
@@ -43,15 +43,19 @@ mongoose.connect(process.env.MONGO_URI)
 // Import các route
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
+const postRoutes = require('./routes/postRoutes');
 
-
+app.use(express.json());
+app.use('/uploads', express.static('uploads'));
+require('./models/userModel');
+require('./models/postModel');
 // Sử dụng route
 app.use('/api', userRoutes);
 app.use('/api', authRoutes);
+app.use('/api', postRoutes);
 // app.post('/login', cors(), (req, res) => {
 //   res.send('Login successful');
 // });
-
 
 
 
