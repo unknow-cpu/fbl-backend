@@ -72,18 +72,18 @@ const userSchema = new mongoose.Schema({
     type: String,
     default:''
   },
-  listfriendid: { 
-    type: [Number], 
-    default: [] 
+  listfriendid: {
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }], // Changed to ObjectId references
+    default: [],
   },
-  listaddfriendid: { 
-    type: [Number], 
-    default: [] 
+  listaddfriendid: { // Friend requests sent
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
+    default: [],
   },
-  listacceptfriendid: { 
-    type: [Number], 
-    default: [] 
-  }
+  listacceptfriendid: { // Friend requests received
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
+    default: [],
+  },
 }, { timestamps: true });
 
 // Hash password trước khi lưu

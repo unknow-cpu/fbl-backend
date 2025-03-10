@@ -1,50 +1,51 @@
 const express = require('express');
 const router = express.Router();
-const userController = require('../middlewares/userMiddleware');
+const authController = require('../controllers/authController');
+const userController = require('../controllers/userController');
 const upload = require('../middlewares/upload');
 
 // Middleware kiểm tra đăng nhập
-const requireLogin = userController.checkRole(['memberUser', 'admin']);
+//const requireLogin = userController.checkRole(['memberUser', 'admin']);
 
 // Profile người dùng
-router.get('/user', requireLogin, async (req, res) => {
-    try {
-        const user = await User.findById(req.session.user.id)
-          .select('-password') // Loại bỏ trường mật khẩu
-          .lean();
-        res.json({ success: true, user });
-      } catch (error) {
-        res.status(500).json({ success: false, message: 'Lỗi server' });
-      }
-});
+// router.get('/user', requireLogin, async (req, res) => {
+//     try {
+//         const user = await User.findById(req.session.user.id)
+//           .select('-password') // Loại bỏ trường mật khẩu
+//           .lean();
+//         res.json({ success: true, user });
+//       } catch (error) {
+//         res.status(500).json({ success: false, message: 'Lỗi server' });
+//       }
+// });
 
-router.get('/userbyid', requireLogin, async (req, res) => {
-  try {
-      const user = await User.findById(req.session.user.id)
-        .select('-password') // Loại bỏ trường mật khẩu
-        .lean();
-      res.json({ success: true, user });
-    } catch (error) {
-      res.status(500).json({ success: false, message: 'Lỗi server' });
-    }
-});
+// router.get('/userbyid', requireLogin, async (req, res) => {
+//   try {
+//       const user = await User.findById(req.session.user.id)
+//         .select('-password') // Loại bỏ trường mật khẩu
+//         .lean();
+//       res.json({ success: true, user });
+//     } catch (error) {
+//       res.status(500).json({ success: false, message: 'Lỗi server' });
+//     }
+// });
 
-// router.get('/getuserbyid', userController.getuserbyid);
-// router.get('/getalluserid', userController.getalluserid);
+// // router.get('/getuserbyid', userController.getuserbyid);
+// // router.get('/getalluserid', userController.getalluserid);
 
-// Cập nhật thông tin cá nhân
-router.put('/profile', requireLogin, async (req, res) => {
-  try {
-    const updatedUser = await User.findByIdAndUpdate(
-      req.session.user.id,
-      { $set: req.body },
-      { new: true }
-    );
-    res.redirect('/profile');
-  } catch (error) {
-    res.redirect('/profile?error=Cập nhật thất bại');
-  }
-});
+// // Cập nhật thông tin cá nhân
+// router.put('/profile-update', requireLogin, async (req, res) => {
+//   try {
+//     const updatedUser = await User.findByIdAndUpdate(
+//       req.session.user.id,
+//       { $set: req.body },
+//       { new: true }
+//     );
+//     res.redirect('/profile');
+//   } catch (error) {
+//     res.redirect('/profile?error=Cập nhật thất bại');
+//   }
+// });
 
 router.post('/upload-avatar', upload.single('avatar'), async (req, res) => {
     try {
@@ -87,5 +88,11 @@ router.post('/upload-avatar', upload.single('avatar'), async (req, res) => {
       res.status(500).json({ message: 'Server error', error: err.message });
     }
   });  
+
+  
+  router.get('/users/:userId', authController.protect, userController.getUserProfile);
+  router.post('/users/add-friend/:friendId', authController.protect, userController.addFriend);
+  router.post('/users/cancel-friend/:friendId', authController.protect, userController.cancelFriendRequest);
+  router.post('/users/accept-friend/:friendId', authController.protect, userController.acceptFriendRequest);
 
 module.exports = router;

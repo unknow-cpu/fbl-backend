@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const postController = require('../controllers/postController');
-const authController = require('../controllers/userController');
+const authController = require('../controllers/authController');
 
 // Create a new post (requires authentication)
 router.post('/posts', authController.protect, postController.post);
